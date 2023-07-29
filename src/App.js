@@ -13,11 +13,17 @@ function App() {
     }
   }
 
+  const addFeedback = (newFeedback) => {
+    newFeedback.id = feedback.slice(-1)[0].id + 1
+    setFeedback([newFeedback, ...feedback])
+    // console.log(newFeedback)
+  }
+
   return (
     <>
       <Header />
       <div className="container">
-        <FeedbackForm />
+        <FeedbackForm handleAdd={addFeedback}/>
         <FeedbackStats feedback={feedback} />
         <FeedbackList feedback={feedback} handleDelete={deleteFeedback}/>
       </div>
