@@ -1,30 +1,28 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 const FeedbackContext = createContext();
 
 export const FeedbackProvider = ({ children }) => {
-  const [feedback, setFeedback] = useState([
-    {
-      id: 1,
-      text: 'This is feedback item 1',
-      rating: 10,
-    },
-    {
-      id: 2,
-      text: 'This is feedback item 2',
-      rating: 9,
-    },
-    {
-      id: 3,
-      text: 'This is feedback item 3',
-      rating: 8,
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [feedback, setFeedback] = useState([]);
 
   const [feedbackEdit, setFeedbackEdit] = useState({
     item: {},
     edit: false,
   });
+
+  // used to fetch data while the component loading
+  useEffect(() => {
+    fetchFeedback();
+  }, []);
+
+  // Fetch feedback from backend server and call setFeedback
+  const fetchFeedback = async () => {
+    const response = await fetch('http://localhost:5000/feedback');
+    const data = await response.json();
+    setFeedback(data);
+    setIsLoading(false);
+  };
 
   // Delete feedback
   const deleteFeedback = (id) => {
@@ -59,10 +57,11 @@ export const FeedbackProvider = ({ children }) => {
     <FeedbackContext.Provider
       value={{
         feedback: feedback,
+        feedbackEdit: feedbackEdit,
+        isLoading: isLoading,
         deleteFeedback: deleteFeedback,
         addFeedback: addFeedback,
         editFeedback: editFeedback,
-        feedbackEdit: feedbackEdit,
         updateFeedback: updateFeedback,
       }}
     >
